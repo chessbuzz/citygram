@@ -9,6 +9,7 @@ end
 gem 'activesupport', require: 'active_support'
 gem 'airbrake', require: false
 gem 'dedent'
+gem 'puma'
 gem 'dotenv', '~> 1.0'
 gem 'faraday', '~> 0.9'
 gem 'faraday_middleware', '~> 0.9'
