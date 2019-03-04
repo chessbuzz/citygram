@@ -34,7 +34,7 @@ group :production do
   gem 'newrelic_rpm', require: false
 end
 
-group :development do
+group :staging do
   gem 'foreman'
 end
 
