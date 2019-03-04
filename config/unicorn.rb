@@ -1,7 +1,7 @@
-worker_processes Integer(ENV['WEB_CONCURRENCY'] || 2)
+# config/unicorn.rb
+worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
 timeout 15
 preload_app true
-listen(ENV['PORT'] || 3000, :backlog => Integer(ENV['UNICORN_BACKLOG'] || 200))
 
 before_fork do |server, worker|
   Signal.trap 'TERM' do
@@ -9,13 +9,15 @@ before_fork do |server, worker|
     Process.kill 'QUIT', Process.pid
   end
 
-  if defined?(Sequel::Model)
-    Sequel::DATABASES.each { |db| db.disconnect }
-  end
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.connection.disconnect!
 end
 
 after_fork do |server, worker|
   Signal.trap 'TERM' do
-    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to sent QUIT'
+    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
   end
+
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.establish_connection
 end
